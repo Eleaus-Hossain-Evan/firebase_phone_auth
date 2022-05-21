@@ -151,14 +151,12 @@ class _HomePageState extends State<HomePage> {
                     showToast('Provide phone number');
                   }
                 },
-                child: _loading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : Text(
-                        'Get OTP',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                        ),
-                      ),
+                child: Text(
+                  'Get OTP',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                  ),
+                ),
               ),
             SizedBox(
               height: 30.h,
@@ -188,7 +186,10 @@ class _HomePageState extends State<HomePage> {
             showToast('Phone number verified');
             await NotificationService.sendNotification();
           } else {
-            setState(() => _loading = false);
+            setState(() {
+              _loading = false;
+              _verificationId == null;
+            });
             showToast('Verification Failed! Try again');
           }
         });
@@ -199,6 +200,7 @@ class _HomePageState extends State<HomePage> {
         if (e.code == 'invalid-phone-number') {
           setState(() {
             _loading = false;
+            _verificationId == null;
           });
           showToast('The provided phone number is not valid');
         }
