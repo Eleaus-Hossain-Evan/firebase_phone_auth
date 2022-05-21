@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pinput/pinput.dart';
 
-import '../infastructure/service.dart';
+import '../infrastructure/service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -109,9 +109,9 @@ class _HomePageState extends State<HomePage> {
                   },
                   length: 6,
                   showCursor: true,
-                  defaultPinTheme: StaticDecoration.defaultPinTheme,
-                  focusedPinTheme: StaticDecoration.focusedPinTheme,
-                  submittedPinTheme: StaticDecoration.submittedPinTheme,
+                  defaultPinTheme: KPinTheme.defaultPinTheme,
+                  focusedPinTheme: KPinTheme.focusedPinTheme,
+                  submittedPinTheme: KPinTheme.submittedPinTheme,
                 ),
                 SizedBox(
                   height: 15.sp,
@@ -151,12 +151,14 @@ class _HomePageState extends State<HomePage> {
                     showToast('Provide phone number');
                   }
                 },
-                child: Text(
-                  'Get OTP',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                  ),
-                ),
+                child: _loading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                        'Get OTP',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                        ),
+                      ),
               ),
             SizedBox(
               height: 30.h,
@@ -179,8 +181,10 @@ class _HomePageState extends State<HomePage> {
       verificationCompleted: (PhoneAuthCredential credential) async {
         await auth.signInWithCredential(credential).then((value) async {
           if (value.user != null) {
-            setState(() => _loading = false);
-            setState(() => _otpVerified = true);
+            setState(() {
+              _loading = false;
+              _otpVerified = true;
+            });
             showToast('Phone number verified');
             await NotificationService.sendNotification();
           } else {
@@ -193,23 +197,27 @@ class _HomePageState extends State<HomePage> {
       ///Verification Failed
       verificationFailed: (FirebaseAuthException e) {
         if (e.code == 'invalid-phone-number') {
-          setState(() => _loading = false);
+          setState(() {
+            _loading = false;
+          });
           showToast('The provided phone number is not valid');
         }
       },
 
       ///Verify with  OTP
       codeSent: (String verificationId, int? resendToken) async {
-        _loading = false;
-        _verificationId = verificationId;
-        setState(() {});
-        _startTimer();
+        setState(() {
+          _loading = false;
+          _verificationId = verificationId;
+          _startTimer();
+        });
       },
-      timeout: const Duration(seconds: 120),
+      // timeout: const Duration(seconds: 120),
       codeAutoRetrievalTimeout: (String verificationId) {
-        showToast('OTP resend');
-        _verificationId = verificationId;
-        setState(() {});
+        setState(() {
+          showToast('OTP resend');
+          _verificationId = verificationId;
+        });
       },
     );
   }
@@ -219,20 +227,37 @@ class _HomePageState extends State<HomePage> {
         verificationId: _verificationId!, smsCode: otp);
     setState(() => _loading = true);
     // Sign the user in (or link) with the credential
-    await FirebaseAuth.instance
-        .signInWithCredential(credential)
-        .then((value) async {
-      if (value.user != null) {
-        setState(() => _loading = false);
-        setState(() => _otpVerified = true);
-        _timer!.cancel();
-        await NotificationService.sendNotification();
-      } else {
-        setState(() => _loading = false);
-        setState(() => _otpVerified = false);
-        showToast('Invalid OTP');
-      }
-    });
+    try {
+      await FirebaseAuth.instance
+          .signInWithCredential(credential)
+          .then((value) async {
+        if (value.user != null) {
+          setState(() {
+            _loading = false;
+            _otpVerified = true;
+          });
+          _timer!.cancel();
+          await NotificationService.sendNotification();
+        } else {
+          setState(() {
+            _loading = false;
+            _otpVerified = false;
+            _verificationId == null;
+          });
+          showToast('Invalid OTP');
+        }
+      });
+    } on FirebaseException catch (e) {
+      setState(() {
+        _loading = false;
+        _otpVerified = false;
+        _verificationId == null;
+      });
+      showToast(e.message.toString());
+      debugPrint(e.toString());
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   void _startTimer() {
@@ -257,28 +282,42 @@ class _HomePageState extends State<HomePage> {
   }
 
   void showToast(String mgs) => Fluttertoast.showToast(
-      msg: mgs,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.black87,
-      textColor: Colors.white,
-      fontSize: 16.0);
+        msg: mgs,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.black87,
+        textColor: Colors.white,
+        fontSize: 16.sp,
+      );
 }
 
-class StaticDecoration {
+class KPinTheme {
   static var defaultPinTheme = PinTheme(
-      height: 40,
-      width: 40,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(6),
-      ));
+    height: 40.h,
+    width: 40.w,
+    decoration: BoxDecoration(
+      border: Border.all(
+        color: Colors.grey,
+      ),
+      borderRadius: BorderRadius.circular(
+        6.r,
+      ),
+    ),
+  );
 
   static var submittedPinTheme = defaultPinTheme.copyDecorationWith(
-      border: Border.all(color: Colors.green),
-      borderRadius: BorderRadius.circular(10));
+    border: Border.all(color: Colors.green),
+    borderRadius: BorderRadius.circular(
+      10.r,
+    ),
+  );
   static var focusedPinTheme = defaultPinTheme.copyDecorationWith(
-      border: Border.all(color: Colors.blue),
-      borderRadius: BorderRadius.circular(10));
+    border: Border.all(
+      color: Colors.blue,
+    ),
+    borderRadius: BorderRadius.circular(
+      10.r,
+    ),
+  );
 }

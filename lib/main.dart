@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'infastructure/service.dart';
+import 'infrastructure/service.dart';
 import 'presentation/home_page.dart';
 
 // > Task :app:signingReport
@@ -48,29 +48,26 @@ class _MyAppState extends State<MyApp> {
 
     ///When App Running
     FirebaseMessaging.onMessage.listen((event) {
-      if (kDebugMode) {
-        print('\n\n!!FCM message Received!! (On Running)\n\n\n');
-        print('Event: ${event.data}\n'
-            'body: ${event.notification!.body}');
-      }
+      debugPrint('\n\n!!FCM message Received!! (On Running)\n\n\n');
+      debugPrint('Event: ${event.data}\n'
+          'body: ${event.notification!.body}');
+
       NotificationService.display(event);
     });
 
     ///When App Minimized
     FirebaseMessaging.onMessageOpenedApp.listen((event) {
-      if (kDebugMode) {
-        print('\n\n\n!!FCM message Received (On Minimize)!!\n\n\n');
-        print('Event: ${event.data}\n'
-            'body: ${event.notification!.body}');
-      }
+      debugPrint('\n\n\n!!FCM message Received (On Minimize)!!\n\n\n');
+      debugPrint('Event: ${event.data}\n'
+          'body: ${event.notification!.body}');
+
       NotificationService.display(event);
     });
 
     ///When App Destroyed
     FirebaseMessaging.instance.getInitialMessage().then((value) {
-      if (kDebugMode) {
-        print('\n\n\n!!FCM message Received (On Destroy)!!\n\n\n');
-      }
+      debugPrint('\n\n\n!!FCM message Received (On Destroy)!!\n\n\n');
+
       if (value != null) {
         NotificationService.display(value);
       }
