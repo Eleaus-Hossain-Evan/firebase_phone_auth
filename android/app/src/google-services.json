@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "584763239971",
+    "project_id": "phone-auth-c7266",
+    "storage_bucket": "phone-auth-c7266.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:584763239971:android:018c2bd8a0ce216f674b96",
+        "android_client_info": {
+          "package_name": "com.example.firebase_phone_auth"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "584763239971-18ahliegaqb8s82gikv7me6a3q27ru0u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLOZxw7nESjGUWnIGITnIxSVA1WvptObg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "584763239971-18ahliegaqb8s82gikv7me6a3q27ru0u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
