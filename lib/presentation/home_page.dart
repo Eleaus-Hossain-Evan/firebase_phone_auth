@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {
                     if (_phoneNumber.text.isNotEmpty) {
                       if (_phoneNumber.text.length == 11) {
-                        NotificationService.sendNotification();
+                        // NotificationService.sendNotification();
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -106,6 +106,18 @@ class _HomePageState extends State<HomePage> {
                     'Get OTP',
                     style: TextStyle(
                       fontSize: 14.sp,
+                    ),
+                  ),
+                  style: ButtonStyle(
+                    side: MaterialStateProperty.resolveWith(
+                      (states) => states.contains(MaterialState.pressed)
+                          ? const BorderSide(color: Colors.purple)
+                          : BorderSide(color: Theme.of(context).primaryColor),
+                    ),
+                    foregroundColor: MaterialStateProperty.resolveWith(
+                      (states) => states.contains(MaterialState.pressed)
+                          ? Colors.purple
+                          : Theme.of(context).primaryColor,
                     ),
                   ),
                 ),

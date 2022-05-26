@@ -8,6 +8,7 @@ import 'package:pinput/pinput.dart';
 
 import '../infrastructure/service.dart';
 import '../widgets/show_toast.dart';
+import 'home_page.dart';
 
 class OtpPage extends StatefulWidget {
   const OtpPage({
@@ -55,37 +56,71 @@ class _OtpPageState extends State<OtpPage> {
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Pinput(
-              onCompleted: (value) async {
-                _otpVerification(value);
-              },
-              length: 6,
-              showCursor: true,
-              defaultPinTheme: StaticDecoration.defaultPinTheme,
-              focusedPinTheme: StaticDecoration.focusedPinTheme,
-              submittedPinTheme: StaticDecoration.submittedPinTheme,
+            Center(
+              child: !_otpVerified
+                  ? Pinput(
+                      onCompleted: (value) async {
+                        _otpVerification(value);
+                      },
+                      length: 6,
+                      showCursor: true,
+                      defaultPinTheme: StaticDecoration.defaultPinTheme,
+                      focusedPinTheme: StaticDecoration.focusedPinTheme,
+                      submittedPinTheme: StaticDecoration.submittedPinTheme,
+                    )
+                  : Column(
+                      children: [
+                        Text(
+                          'Phone Number Verified',
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            color: Colors.green,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20.h,
+                        ),
+                        OutlinedButton.icon(
+                          onPressed: () => Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const HomePage(),
+                            ),
+                          ),
+                          icon: const Icon(Icons.arrow_back),
+                          label: const Text('Continue'),
+                          style: ButtonStyle(
+                            side: MaterialStateProperty.resolveWith(
+                              (states) => states.contains(MaterialState.pressed)
+                                  ? const BorderSide(color: Colors.purple)
+                                  : const BorderSide(color: Colors.green),
+                            ),
+                            foregroundColor: MaterialStateProperty.resolveWith(
+                              (states) => states.contains(MaterialState.pressed)
+                                  ? Colors.purple
+                                  : Colors.green,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
             ),
             SizedBox(
               height: 15.sp,
             ),
-            _otpVerified
+            !_otpVerified
                 ? Text(
-                    'Phone Number Verified',
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      color: Colors.green,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )
-                : Text(
                     'OTP will resend after $_seconds sec',
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: Colors.grey.shade900,
                     ),
-                  ),
+                  )
+                : const SizedBox.shrink(),
             SizedBox(
               height: 30.h,
             ),
@@ -113,7 +148,11 @@ class _OtpPageState extends State<OtpPage> {
           if (value.user != null) {
             setState(() => _loading = false);
             setState(() => _otpVerified = true);
-            showToast('Phone number verified');
+            showToast(
+              'Phone number verified',
+              backgroundColor: Colors.green,
+              textColor: Colors.black,
+            );
             await NotificationService.sendNotification();
           } else {
             setState(() => _loading = false);

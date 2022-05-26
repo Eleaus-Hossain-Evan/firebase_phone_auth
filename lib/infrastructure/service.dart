@@ -12,7 +12,10 @@ class NotificationService {
   static void initialize() {
     const InitializationSettings initializationSettings =
         InitializationSettings(
-            android: AndroidInitializationSettings('@mipmap/ic_launcher'));
+      android: AndroidInitializationSettings(
+        '@mipmap/ic_launcher',
+      ),
+    );
     _flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
@@ -21,16 +24,23 @@ class NotificationService {
       Random random = Random();
       int id = random.nextInt(1000);
       const NotificationDetails notificationDetails = NotificationDetails(
-          android: AndroidNotificationDetails('mychannel', 'mychannel',
-              importance: Importance.max, priority: Priority.high));
+        android: AndroidNotificationDetails(
+          'mychannel',
+          'mychannel',
+          importance: Importance.max,
+          priority: Priority.high,
+          icon: "@mipmap/ic_launcher",
+        ),
+      );
 
       await _flutterLocalNotificationsPlugin.show(
-          id,
-          message.notification!.title,
-          message.notification!.body,
-          notificationDetails);
+        id,
+        message.notification!.title,
+        message.notification!.body,
+        notificationDetails,
+      );
     } catch (e) {
-      print('Error>>>$e');
+      debugPrint('Error>>>$e');
     }
   }
 
@@ -51,23 +61,21 @@ class NotificationService {
               headers: <String, String>{
                 'Content-Type': 'application/json',
                 'Authorization':
-                    'key=AAAAf_t5y3Q:APA91bG7WkRxpfHtFXGlyPsd9wqxgQdOnPJIhniFLwXZspBIgsoPHcYCQWxpTE7L0awDu_6-qvIuqEJ0luY0n1jCIvWpRB5hbBFd4q1L8pduy9px9CKkmdupWB0VQke_Cq73VEF6XaH6'
+                    'key=AAAAiCaa7iM:APA91bHtmwpzCnTPhOA3zRdCuyiujA_ZGfU-gU4vpt5C9FZlBVQJ_H6xUAWHe0HefYVuHhu94vxth3R9AqtCkJY8qJODtOmPmh3tI5Z3tbiANefJ9EBD4MLgmZfEjAvwJVkKOcxkbzqB'
               },
               body: jsonEncode(<String, dynamic>{
                 'notification': <String, dynamic>{
-                  'title': 'Notification from B2GSOFT',
+                  'title': 'Firebase Phone Authentication',
                   'body': 'Your phone number is verified'
                 },
                 'priority': 'high',
                 'data': data,
                 'to': fcmToken
               }));
-      print('API Response::::::::::::::::::::${response.body}\n\n');
-      print('Fcm Token::::::::::::::::::::$fcmToken\n\n');
+      debugPrint('API Response::::::::::::::::::::${response.body}\n\n');
+      debugPrint('Fcm Token::::::::::::::::::::$fcmToken\n\n');
     } catch (e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
+      debugPrint(e.toString());
     }
   }
 }
