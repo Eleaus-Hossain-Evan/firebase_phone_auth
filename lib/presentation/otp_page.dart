@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pinput/pinput.dart';
 
-import '../infastructure/service.dart';
+import '../infrastructure/service.dart';
 import '../widgets/show_toast.dart';
 
 class OtpPage extends StatefulWidget {
